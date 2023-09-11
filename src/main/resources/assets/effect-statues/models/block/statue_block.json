@@ -1,0 +1,54 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [128, 128],
+	"textures": {
+		"0": "effect-statues:block/statue_block",
+		"particle": "minecraft:block/stone"
+	},
+	"elements": [
+		{
+			"from": [0, 5, 0],
+			"to": [16, 6, 16],
+			"faces": {
+				"north": {"uv": [2, 2, 4, 2.125], "texture": "#0"},
+				"east": {"uv": [0, 2, 2, 2.125], "texture": "#0"},
+				"south": {"uv": [6, 2, 8, 2.125], "texture": "#0"},
+				"west": {"uv": [4, 2, 6, 2.125], "texture": "#0"},
+				"up": {"uv": [4, 2, 2, 0], "texture": "#0"},
+				"down": {"uv": [6, 0, 4, 2], "texture": "#0"}
+			}
+		},
+		{
+			"from": [1, 3, 1],
+			"to": [15, 5, 15],
+			"faces": {
+				"north": {"uv": [1.75, 3.875, 3.5, 4.125], "texture": "#0"},
+				"east": {"uv": [0, 3.875, 1.75, 4.125], "texture": "#0"},
+				"south": {"uv": [5.25, 3.875, 7, 4.125], "texture": "#0"},
+				"west": {"uv": [3.5, 3.875, 5.25, 4.125], "texture": "#0"},
+				"up": {"uv": [3.5, 3.875, 1.75, 2.125], "texture": "#0"},
+				"down": {"uv": [5.25, 2.125, 3.5, 3.875], "texture": "#0"}
+			}
+		},
+		{
+			"from": [0, 0, 0],
+			"to": [16, 3, 16],
+			"faces": {
+				"north": {"uv": [2, 6.125, 4, 6.5], "texture": "#0"},
+				"east": {"uv": [0, 6.125, 2, 6.5], "texture": "#0"},
+				"south": {"uv": [6, 6.125, 8, 6.5], "texture": "#0"},
+				"west": {"uv": [4, 6.125, 6, 6.5], "texture": "#0"},
+				"up": {"uv": [4, 6.125, 2, 4.125], "texture": "#0"},
+				"down": {"uv": [6, 4.125, 4, 6.125], "texture": "#0"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "VoxelShapes",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [0, 1, 2]
+		}
+	]
+}

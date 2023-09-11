@@ -1,0 +1,9 @@
+{
+	"required": true,
+	"package": "net.lightglow.statueeffects.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

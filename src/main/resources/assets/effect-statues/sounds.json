@@ -1,0 +1,8 @@
+{
+  "block.statue.insert": {
+    "subtitle": "sounds.effect-statues.insert.item",
+    "sounds": [
+      "effect-statues:statue/insert_item"
+    ]
+  }
+}

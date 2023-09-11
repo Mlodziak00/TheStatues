@@ -1,0 +1,7 @@
+{
+  "effect.effect-statues.winged": "Winged",
+  "block.effect-statues.statue_block": "Statue",
+  "sounds.effect-statues.insert.item": "Insert Item Into Statue",
+
+  "item.effect-statues.statueitem.tooltip": "Using a specific item on the Statue may do something..."
+}
