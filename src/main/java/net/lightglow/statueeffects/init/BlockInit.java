@@ -20,9 +20,7 @@ import net.minecraft.util.registry.Registry;
 public class BlockInit {
     public static BlockEntityType<StatueBlockEntity> STATUE_BLOCK_ENTITY;
 
-    public static final Block STATUE_BLOCK = new StatueBlock(FabricBlockSettings.of(Material.STONE).strength(3.0F, 3.0F));
-
-    public static final EnumProperty<StatueTypes> STATUE_TYPE = EnumProperty.of("statuetype", StatueTypes.class);
+    public static final Block STATUE_BLOCK = new StatueBlock(FabricBlockSettings.of(Material.STONE).strength(3.0F, 3600000.0f));
 
     public static void registerBlocks()
     {

@@ -5,24 +5,19 @@ import net.lightglow.statueeffects.util.StatueBlockEffects;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.stat.Stat;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.Nameable;
-import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class StatueBlockEntity extends BlockEntity implements Nameable {
-    StatueTypes statueTypes;
+    public StatueTypes statueTypes;
     public Text customTextureName;
     public StatueBlockEntity(BlockPos pos, BlockState state) {
         super(BlockInit.STATUE_BLOCK_ENTITY, pos, state);
@@ -59,7 +54,7 @@ public class StatueBlockEntity extends BlockEntity implements Nameable {
     @Override
     protected void writeNbt(NbtCompound nbt) {
         if (this.statueTypes != null) {
-            nbt.putString("StatueType", this.statueTypes.asString());
+            nbt.contains(statueTypes.name());
         }
         if (this.customTextureName != null) {
             nbt.putString("CustomTextureName", Text.Serializer.toJson(this.customTextureName));
@@ -71,7 +66,7 @@ public class StatueBlockEntity extends BlockEntity implements Nameable {
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         if (nbt.contains("StatueTypes", NbtElement.STRING_TYPE)) {
-            nbt.getString("StatueType");
+            this.statueTypes = StatueTypes.valueOf(statueTypes.name());
         }
         if (nbt.contains("CustomTextureName", NbtElement.STRING_TYPE)) {
             this.customTextureName = Text.Serializer.fromJson(nbt.getString("CustomTextureName"));
@@ -122,6 +117,5 @@ public class StatueBlockEntity extends BlockEntity implements Nameable {
     public void setCustomName(Text customTextureName) {
         this.customTextureName = customTextureName;
     }
-
 
 }

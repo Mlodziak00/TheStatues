@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 import net.lightglow.statueeffects.EffectStatues;
 import net.lightglow.statueeffects.common.block.StatueBlock;
 import net.lightglow.statueeffects.common.block.StatueBlockEntity;
+import net.lightglow.statueeffects.common.block.StatueTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -50,15 +51,15 @@ public class StatueBlockEntityRenderer<T extends BlockEntity> implements BlockEn
                 case WEST -> matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(90));
             }
             VertexConsumer vertexConsumer;
-            //if (state.get(STATUE_TYPE) == isFlightStatue) {
-            //    if (Objects.equals(be.customTextureName, Text.literal("Apples"))) {
-            //        vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutoutNoCull(APPLES_TEXTURE));
-            //        this.wingedStatue.renderWingedStatue(matrices, vertexConsumer, light, overlay, 1.0f, 1.0f, 1.0f, 1.0f);
-            //    } else {
-            //        vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutoutNoCull(STATUE_TEXTURE));
-            //       this.wingedStatue.renderWingedStatue(matrices, vertexConsumer, light, overlay, 1.0f, 1.0f, 1.0f, 1.0f);
-            //    }
-            //} else {
+            if (be.statueTypes == StatueTypes.FLIGHT) {
+                if (Objects.equals(be.customTextureName, Text.literal("Apples"))) {
+                    vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutoutNoCull(APPLES_TEXTURE));
+                    this.wingedStatue.renderWingedStatue(matrices, vertexConsumer, light, overlay, 1.0f, 1.0f, 1.0f, 1.0f);
+                } else {
+                    vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutoutNoCull(STATUE_TEXTURE));
+                   this.wingedStatue.renderWingedStatue(matrices, vertexConsumer, light, overlay, 1.0f, 1.0f, 1.0f, 1.0f);
+                }
+            } else {
                 if (Objects.equals(be.customTextureName, Text.literal("Apples"))) {
                     vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutoutNoCull(APPLES_TEXTURE));
                     this.statue.renderStatue(matrices, vertexConsumer, light, overlay, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -69,7 +70,7 @@ public class StatueBlockEntityRenderer<T extends BlockEntity> implements BlockEn
                     vertexConsumer = vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutoutNoCull(STATUE_TEXTURE));
                     this.statue.renderStatue(matrices, vertexConsumer, light, overlay, 1.0f, 1.0f, 1.0f, 1.0f);
                 }
-            //}
+            }
             matrices.pop();
         }
     }

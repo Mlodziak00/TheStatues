@@ -40,28 +40,24 @@ public class StatueBlock extends BlockWithEntity implements BlockEntityProvider 
 
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
-    public static final EnumProperty<StatueTypes> STATUE_TYPE = BlockInit.STATUE_TYPE;
     DoubleBlockHalf _lower = DoubleBlockHalf.LOWER;
     DoubleBlockHalf _upper = DoubleBlockHalf.UPPER;
-    StatueTypes isBaseStatue = StatueTypes.BASE;
-
-    StatueTypes isFlightStatue = StatueTypes.FLIGHT;
 
 
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING, HALF, STATUE_TYPE);
+        builder.add(FACING, HALF);
     }
 
     public StatueBlock(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH).with(HALF, _lower).with(STATUE_TYPE, isBaseStatue));
+        this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH).with(HALF, _lower));
     }
 
     @Override
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        destroy(world, pos, false);
+        destroy(world, pos, true);
         super.onBreak(world, pos, state, player);
     }
 
@@ -71,11 +67,11 @@ public class StatueBlock extends BlockWithEntity implements BlockEntityProvider 
         super.afterBreak(world, player, pos, state, tileEntity, stack);
     }
 
-    @Override
-    public void onDestroyedByExplosion(World world, BlockPos pos, Explosion explosion) {
-        destroy(world, pos, true);
-        super.onDestroyedByExplosion(world, pos, explosion);
-    }
+    //@Override
+    //public void onDestroyedByExplosion(World world, BlockPos pos, Explosion explosion) {
+    //    destroy(world, pos, false);
+    //    super.onDestroyedByExplosion(world, pos, explosion);
+    //}
     private void destroy(World world, BlockPos pos, boolean shouldDrop) {
         BlockState state = world.getBlockState(pos);
         if (world.getBlockState(state.get(HALF) == _lower ? pos.up() : pos.down()).getBlock() == this)
@@ -151,12 +147,12 @@ public class StatueBlock extends BlockWithEntity implements BlockEntityProvider 
             ItemStack itemStack = player.getStackInHand(hand);
             BlockEntity be = world.getBlockEntity(pos);
             if (be instanceof StatueBlockEntity) {
-                if (state.get(STATUE_TYPE) == isBaseStatue) {
+                if (((StatueBlockEntity) be).statueTypes == StatueTypes.BASE) {
                     if (itemStack.isOf(Items.AMETHYST_SHARD) && hand == Hand.MAIN_HAND) {
                         if (!player.isCreative()) {
                             player.getInventory().getMainHandStack().decrement(1);
                         }
-                        world.setBlockState(pos, state.with(STATUE_TYPE, isFlightStatue));
+
                         this.playInsertItemSound(player);
                         return ActionResult.SUCCESS;
                     }

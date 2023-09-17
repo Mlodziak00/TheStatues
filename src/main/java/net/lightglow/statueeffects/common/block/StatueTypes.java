@@ -10,17 +10,20 @@ public enum StatueTypes implements StringIdentifiable {
     STRENGTH("strength"),
     SHORTSIGHT("shortsight");
 
-    private final String statueType;
+    private final String name;
 
-    StatueTypes(String statueType) {this.statueType = statueType;}
+    private StatueTypes(String name)
+    {
+        this.name = name;
+    }
 
     public String toString() {
-        return this.statueType;
+        return this.name;
     }
 
     @Override
     public String asString() {
-        return this.statueType;
+        return this.name;
     }
 
 }
