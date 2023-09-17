@@ -14,8 +14,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.particle.BlockStateParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.state.StateManager;
@@ -36,26 +34,29 @@ import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 public class StatueBlock extends BlockWithEntity implements BlockEntityProvider {
 
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-    public static final EnumProperty<DoubleBlockHalf> half = Properties.DOUBLE_BLOCK_HALF;
+    public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
+    public static final EnumProperty<StatueTypes> STATUE_TYPE = BlockInit.STATUE_TYPE;
     DoubleBlockHalf _lower = DoubleBlockHalf.LOWER;
     DoubleBlockHalf _upper = DoubleBlockHalf.UPPER;
+    StatueTypes isBaseStatue = StatueTypes.BASE;
+
+    StatueTypes isFlightStatue = StatueTypes.FLIGHT;
 
 
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING, half);
+        builder.add(FACING, HALF, STATUE_TYPE);
     }
 
     public StatueBlock(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH).with(half, _lower));
+        this.setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH).with(HALF, _lower).with(STATUE_TYPE, isBaseStatue));
     }
 
     @Override
@@ -77,8 +78,8 @@ public class StatueBlock extends BlockWithEntity implements BlockEntityProvider 
     }
     private void destroy(World world, BlockPos pos, boolean shouldDrop) {
         BlockState state = world.getBlockState(pos);
-        if (world.getBlockState(state.get(half) == _lower ? pos.up() : pos.down()).getBlock() == this)
-            world.removeBlock(state.get(half) == _lower ? pos.up() : pos.down(), false);
+        if (world.getBlockState(state.get(HALF) == _lower ? pos.up() : pos.down()).getBlock() == this)
+            world.removeBlock(state.get(HALF) == _lower ? pos.up() : pos.down(), false);
         if (shouldDrop) ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(this));
     }
 
@@ -132,80 +133,66 @@ public class StatueBlock extends BlockWithEntity implements BlockEntityProvider 
         if (itemStack.hasCustomName() && (be = world.getBlockEntity(pos)) instanceof StatueBlockEntity){
             ((StatueBlockEntity) be).setCustomName(itemStack.getName());
         }
-        world.setBlockState(pos.up(), BlockInit.STATUE_BLOCK.getDefaultState().with(FACING, world.getBlockState(pos).get(FACING)).with(half, _upper), 3);
+        world.setBlockState(pos.up(), BlockInit.STATUE_BLOCK.getDefaultState().with(FACING, world.getBlockState(pos).get(FACING)).with(HALF, _upper), 3);
+    }
+
+    @Override
+    public boolean onSyncedBlockEvent(BlockState state, World world, BlockPos pos, int type, int data) {
+        if (world.getBlockEntity(pos) instanceof StatueBlockEntity entity) {
+            return entity.onSyncedBlockEvent(type, data);
+        } else {
+            return false;
+        }
     }
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!world.isClient()){
+        if (!world.isClient()) {
             ItemStack itemStack = player.getStackInHand(hand);
             BlockEntity be = world.getBlockEntity(pos);
             if (be instanceof StatueBlockEntity) {
-                if (itemStack.isOf(Items.AMETHYST_SHARD) && ((StatueBlockEntity) be).isBaseStatue) {
-                    if (!player.isCreative()){
-                        player.getInventory().getMainHandStack().decrement(1);
+                if (state.get(STATUE_TYPE) == isBaseStatue) {
+                    if (itemStack.isOf(Items.AMETHYST_SHARD) && hand == Hand.MAIN_HAND) {
+                        if (!player.isCreative()) {
+                            player.getInventory().getMainHandStack().decrement(1);
+                        }
+                        world.setBlockState(pos, state.with(STATUE_TYPE, isFlightStatue));
+                        this.playInsertItemSound(player);
+                        return ActionResult.SUCCESS;
                     }
-                    this.setFlightStatue(be, world, pos);
-                    this.playInsertItemSound(player);
-                    return ActionResult.SUCCESS;
-                } else if (itemStack.isIn(ItemTags.FLOWERS) && ((StatueBlockEntity) be).isBaseStatue) {
-                    if (!player.isCreative()){
-                        player.getInventory().getMainHandStack().decrement(1);
-                    }
-                    this.setRegenStatue(be, world, pos);
-                    this.playInsertItemSound(player);
-                    return ActionResult.SUCCESS;
-                } else if (itemStack.isIn(ItemTags.ANVIL) && ((StatueBlockEntity) be).isBaseStatue) {
-                    if (!player.isCreative()){
-                        player.getInventory().getMainHandStack().decrement(1);
-                    }
-                    this.setDefincesStatue(be, world, pos);
-                    this.playInsertItemSound(player);
-                    return ActionResult.SUCCESS;
-                } else if (itemStack.isIn(ItemTags.WOOL) && ((StatueBlockEntity) be).isBaseStatue) {
-                    if (!player.isCreative()){
-                        player.getInventory().getMainHandStack().decrement(1);
-                    }
-                    this.setStrengthStatue(be, world, pos);
-                    this.playInsertItemSound(player);
-                    return ActionResult.SUCCESS;
-                } else if (itemStack.isIn(ItemTags.FISHES) && ((StatueBlockEntity) be).isBaseStatue) {
-                    if (!player.isCreative()){
-                        player.getInventory().getMainHandStack().decrement(1);
-                    }
-                    this.setShortSightStatue(be, world, pos);
-                    this.playInsertItemSound(player);
-                    return ActionResult.SUCCESS;
-                    }
+                    //else if (itemStack.isIn(ItemTags.FLOWERS)) {
+                    //       if (!player.isCreative()){
+                    //            player.getInventory().getMainHandStack().decrement(1);
+                    //        }
+                    //         this.setRegenStatue(be, world, pos);
+                    //         this.playInsertItemSound(player);
+                    //         return ActionResult.SUCCESS;
+                    //       } else if (itemStack.isIn(ItemTags.ANVIL) && ((StatueBlockEntity) be).isBaseStatue) {
+                    //           if (!player.isCreative()){
+                    //               player.getInventory().getMainHandStack().decrement(1);
+                    //           }
+                    //            this.setDefincesStatue(be, world, pos);
+                    //        this.playInsertItemSound(player);
+                    //     return ActionResult.SUCCESS;
+                    // } else if (itemStack.isIn(ItemTags.WOOL) && ((StatueBlockEntity) be).isBaseStatue) {
+                    //    if (!player.isCreative()){
+                    //        player.getInventory().getMainHandStack().decrement(1);
+                    //    }
+                    //    this.setStrengthStatue(be, world, pos);
+                    //    this.playInsertItemSound(player);
+                    //    return ActionResult.SUCCESS;
+                    //} else if (itemStack.isIn(ItemTags.FISHES) && ((StatueBlockEntity) be).isBaseStatue) {
+                    //    if (!player.isCreative()){
+                    //        player.getInventory().getMainHandStack().decrement(1);
+                    //    }
+                    //    this.setShortSightStatue(be, world, pos);
+                    //    this.playInsertItemSound(player);
+                    //    return ActionResult.SUCCESS;
+                    //    }
                 }
+            }
         }
-        return ActionResult.PASS;
-    }
-
-    public void setFlightStatue(BlockEntity blockEntity, World world, BlockPos pos) {
-        ((StatueBlockEntity) blockEntity).isBaseStatue = false;
-        ((StatueBlockEntity) blockEntity).isFlightStatue = true;
-        world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.STONE.getDefaultState()), pos.getX(), pos.getY(), pos.getZ(), Math.cos(20), 0.15d, Math.sin(20) + 5);
-    }
-    public void setRegenStatue(BlockEntity blockEntity, World world, BlockPos pos) {
-        ((StatueBlockEntity) blockEntity).isBaseStatue = false;
-        ((StatueBlockEntity) blockEntity).isRegenStatue = true;
-        world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.STONE.getDefaultState()), pos.getX(), pos.getY(), pos.getZ(), Math.cos(20), 0.15d, Math.sin(20) + 5);
-    }
-    public void setDefincesStatue(BlockEntity blockEntity, World world, BlockPos pos) {
-        ((StatueBlockEntity) blockEntity).isBaseStatue = false;
-        ((StatueBlockEntity) blockEntity).isDefincesStatue = true;
-        world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.STONE.getDefaultState()), pos.getX(), pos.getY(), pos.getZ(), Math.cos(20), 0.15d, Math.sin(20) + 5);
-    }
-    public void setStrengthStatue(BlockEntity blockEntity, World world, BlockPos pos) {
-        ((StatueBlockEntity) blockEntity).isBaseStatue = false;
-        ((StatueBlockEntity) blockEntity).isStrengthStatue = true;
-        world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.STONE.getDefaultState()), pos.getX(), pos.getY(), pos.getZ(), Math.cos(20), 0.15d, Math.sin(20) + 5);
-    }
-    public void setShortSightStatue(BlockEntity blockEntity, World world, BlockPos pos) {
-        ((StatueBlockEntity) blockEntity).isBaseStatue = false;
-        ((StatueBlockEntity) blockEntity).isShortSightStatue = true;
-        world.addParticle(new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.STONE.getDefaultState()), pos.getX(), pos.getY(), pos.getZ(), Math.cos(20), 0.15d, Math.sin(20) + 5);
+        return ActionResult.SUCCESS;
     }
 
 
@@ -235,9 +222,9 @@ public class StatueBlock extends BlockWithEntity implements BlockEntityProvider 
     }
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        if (state.get(half) == _upper) {
+        if (state.get(HALF) == _upper) {
             return SHAPE_TOP;
-        } else if (state.get(half) == _lower) {
+        } else if (state.get(HALF) == _lower) {
             return SHAPE_BOTTOM;
         }
         return null;
