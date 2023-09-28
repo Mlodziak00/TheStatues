@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " # ",
+        "#G#",
+        "#D#"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:stone"
+        },
+        "G": {
+            "item": "minecraft:ghast_tear"
+        },
+        "D": {
+            "item": "minecraft:iron_block"
+        }
+    },
+    "result": {
+        "item": "effect-statues:statue_block",
+        "count": 1
+    }
+}

@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.state.StateManager;
@@ -77,6 +78,10 @@ public class StatueBlock extends BlockWithEntity implements BlockEntityProvider 
         if (world.getBlockState(state.get(HALF) == _lower ? pos.up() : pos.down()).getBlock() == this)
             world.removeBlock(state.get(HALF) == _lower ? pos.up() : pos.down(), false);
         if (shouldDrop) ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(this));
+    }
+
+    private void setStatueType(BlockEntity be, int number) {
+        ((StatueBlockEntity) be).statueTypes = number;
     }
 
 
@@ -147,44 +152,47 @@ public class StatueBlock extends BlockWithEntity implements BlockEntityProvider 
             ItemStack itemStack = player.getStackInHand(hand);
             BlockEntity be = world.getBlockEntity(pos);
             if (be instanceof StatueBlockEntity) {
-                if (((StatueBlockEntity) be).statueTypes == StatueTypes.BASE) {
-                    if (itemStack.isOf(Items.AMETHYST_SHARD) && hand == Hand.MAIN_HAND) {
-                        if (!player.isCreative()) {
-                            player.getInventory().getMainHandStack().decrement(1);
+                if (state.get(HALF) == _lower) {
+                    if (((StatueBlockEntity) be).statueTypes == 0) {
+                        if (hand == Hand.MAIN_HAND) {
+                            if (itemStack.isOf(Items.AMETHYST_SHARD)) {
+                                if (!player.isCreative()) {
+                                    player.getInventory().getMainHandStack().decrement(1);
+                                }
+                                this.setStatueType(be, 1);
+                                this.playInsertItemSound(player);
+                                return ActionResult.SUCCESS;
+                            } else if (itemStack.isIn(ItemTags.FLOWERS)) {
+                                if (!player.isCreative()) {
+                                    player.getInventory().getMainHandStack().decrement(1);
+                                }
+                                this.setStatueType(be, 2);
+                                this.playInsertItemSound(player);
+                                return ActionResult.SUCCESS;
+                            } else if (itemStack.isIn(ItemTags.ANVIL)) {
+                                if (!player.isCreative()) {
+                                    player.getInventory().getMainHandStack().decrement(1);
+                                }
+                                this.setStatueType(be, 3);
+                                this.playInsertItemSound(player);
+                                return ActionResult.SUCCESS;
+                            } else if (itemStack.isIn(ItemTags.WOOL)) {
+                                if (!player.isCreative()) {
+                                    player.getInventory().getMainHandStack().decrement(1);
+                                }
+                                this.setStatueType(be, 4);
+                                this.playInsertItemSound(player);
+                                return ActionResult.SUCCESS;
+                            } else if (itemStack.isOf(Items.SPIDER_EYE)) {
+                                if (!player.isCreative()) {
+                                    player.getInventory().getMainHandStack().decrement(1);
+                                }
+                                this.setStatueType(be, 5);
+                                this.playInsertItemSound(player);
+                                return ActionResult.SUCCESS;
+                            }
                         }
-
-                        this.playInsertItemSound(player);
-                        return ActionResult.SUCCESS;
                     }
-                    //else if (itemStack.isIn(ItemTags.FLOWERS)) {
-                    //       if (!player.isCreative()){
-                    //            player.getInventory().getMainHandStack().decrement(1);
-                    //        }
-                    //         this.setRegenStatue(be, world, pos);
-                    //         this.playInsertItemSound(player);
-                    //         return ActionResult.SUCCESS;
-                    //       } else if (itemStack.isIn(ItemTags.ANVIL) && ((StatueBlockEntity) be).isBaseStatue) {
-                    //           if (!player.isCreative()){
-                    //               player.getInventory().getMainHandStack().decrement(1);
-                    //           }
-                    //            this.setDefincesStatue(be, world, pos);
-                    //        this.playInsertItemSound(player);
-                    //     return ActionResult.SUCCESS;
-                    // } else if (itemStack.isIn(ItemTags.WOOL) && ((StatueBlockEntity) be).isBaseStatue) {
-                    //    if (!player.isCreative()){
-                    //        player.getInventory().getMainHandStack().decrement(1);
-                    //    }
-                    //    this.setStrengthStatue(be, world, pos);
-                    //    this.playInsertItemSound(player);
-                    //    return ActionResult.SUCCESS;
-                    //} else if (itemStack.isIn(ItemTags.FISHES) && ((StatueBlockEntity) be).isBaseStatue) {
-                    //    if (!player.isCreative()){
-                    //        player.getInventory().getMainHandStack().decrement(1);
-                    //    }
-                    //    this.setShortSightStatue(be, world, pos);
-                    //    this.playInsertItemSound(player);
-                    //    return ActionResult.SUCCESS;
-                    //    }
                 }
             }
         }

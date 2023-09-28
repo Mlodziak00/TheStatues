@@ -3,13 +3,12 @@
 	"id": "effect-statues",
 	"version": "${version}",
 	"name": "Effect Statues",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A mod that adds in a new Statue, wonder what it does...",
 	"authors": [
 		"Me!"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/Mlodziak00/TheStatues"
 	},
 	"license": "MIT",
 	"icon": "assets/effect-statues/icon.png",

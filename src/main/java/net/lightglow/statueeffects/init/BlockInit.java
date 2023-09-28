@@ -6,14 +6,12 @@ import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityT
 import net.lightglow.statueeffects.EffectStatues;
 import net.lightglow.statueeffects.common.block.StatueBlock;
 import net.lightglow.statueeffects.common.block.StatueBlockEntity;
-import net.lightglow.statueeffects.common.block.StatueTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.state.property.EnumProperty;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 

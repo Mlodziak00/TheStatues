@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class StatueBlockEntity extends BlockEntity implements Nameable {
-    public StatueTypes statueTypes;
+    public int statueTypes = 0;
     public Text customTextureName;
     public StatueBlockEntity(BlockPos pos, BlockState state) {
         super(BlockInit.STATUE_BLOCK_ENTITY, pos, state);
@@ -27,23 +27,23 @@ public class StatueBlockEntity extends BlockEntity implements Nameable {
     {
         if(!world.isClient)
         {
-            if (be.statueTypes == StatueTypes.FLIGHT) {
+            if (be.statueTypes == 1) {
                 StatueBlockEffects.giveFly(world, pos, 10, 10);
                 world.updateListeners(pos,state,state,Block.NOTIFY_ALL);
                 world.markDirty(pos);
-            } else if (be.statueTypes == StatueTypes.REGEN) {
+            } else if (be.statueTypes == 2) {
                 StatueBlockEffects.giveRegen(world, pos, 10, 10);
                 world.updateListeners(pos,state,state,Block.NOTIFY_ALL);
                 world.markDirty(pos);
-            } else if (be.statueTypes == StatueTypes.DEFINCES) {
+            } else if (be.statueTypes == 3) {
                 StatueBlockEffects.giveDefinces(world, pos, 10, 10);
                 world.updateListeners(pos,state,state,Block.NOTIFY_ALL);
                 world.markDirty(pos);
-            } else if (be.statueTypes == StatueTypes.STRENGTH) {
+            } else if (be.statueTypes == 4) {
                 StatueBlockEffects.giveStrength(world, pos, 10, 10);
                 world.updateListeners(pos,state,state,Block.NOTIFY_ALL);
                 world.markDirty(pos);
-            } else if (be.statueTypes == StatueTypes.SHORTSIGHT) {
+            } else if (be.statueTypes == 5) {
                 StatueBlockEffects.giveShortSight(world, pos, 10, 10);
                 world.updateListeners(pos,state,state,Block.NOTIFY_ALL);
                 world.markDirty(pos);
@@ -53,9 +53,7 @@ public class StatueBlockEntity extends BlockEntity implements Nameable {
 
     @Override
     protected void writeNbt(NbtCompound nbt) {
-        if (this.statueTypes != null) {
-            nbt.contains(statueTypes.name());
-        }
+        nbt.putInt("statueType", statueTypes);
         if (this.customTextureName != null) {
             nbt.putString("CustomTextureName", Text.Serializer.toJson(this.customTextureName));
         }
@@ -65,9 +63,7 @@ public class StatueBlockEntity extends BlockEntity implements Nameable {
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
-        if (nbt.contains("StatueTypes", NbtElement.STRING_TYPE)) {
-            this.statueTypes = StatueTypes.valueOf(statueTypes.name());
-        }
+        statueTypes = nbt.getInt("statueType");
         if (nbt.contains("CustomTextureName", NbtElement.STRING_TYPE)) {
             this.customTextureName = Text.Serializer.fromJson(nbt.getString("CustomTextureName"));
         }
@@ -82,9 +78,7 @@ public class StatueBlockEntity extends BlockEntity implements Nameable {
     @Override
     public NbtCompound toInitialChunkDataNbt() {
         NbtCompound nbt = new NbtCompound();
-        if (this.statueTypes != null) {
-            nbt.putString("StatueType", this.statueTypes.asString());
-        }
+        nbt.putInt("statueType", statueTypes);
         if (this.customTextureName != null) {
             nbt.putString("CustomTextureName", Text.Serializer.toJson(this.customTextureName));
         }
